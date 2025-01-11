@@ -10,7 +10,7 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
-  final Shader HeaderGradient = LinearGradient(colors: <Color>[
+  final Shader headerGradient = LinearGradient(colors: <Color>[
     Color.fromARGB(255, 1, 242, 255),
     Color.fromARGB(255, 33, 170, 97)
   ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
@@ -29,20 +29,23 @@ class _MyHomeState extends State<MyHome> {
   ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
 
   mySkills(num, type) {
-    return Row(
-      children: [
-        Text(
-          num,
-          style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              foreground: Paint()..shader = overallTextGradient),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 10),
-          child: Text(type),
-        ),
-      ],
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            num,
+            style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                foreground: Paint()..shader = overallTextGradient),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            child: Text(type),
+          ),
+        ],
+      ),
     );
   }
 
@@ -85,6 +88,11 @@ class _MyHomeState extends State<MyHome> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         leading: PopupMenuButton(
+            onSelected: (result) {
+              if (result == 2) {
+                Navigator.pushNamed(context, "about");
+              }
+            },
             icon: Icon(
               Icons.menu,
               color: Colors.white,
@@ -92,6 +100,7 @@ class _MyHomeState extends State<MyHome> {
             color: Colors.black,
             itemBuilder: (context) => [
                   PopupMenuItem(
+                    value: 1,
                     child: TextButton(
                         onPressed: () {},
                         child: Text(
@@ -100,8 +109,11 @@ class _MyHomeState extends State<MyHome> {
                         )),
                   ),
                   PopupMenuItem(
+                    value: 2,
                     child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, "about");
+                        },
                         child: Text(
                           "About",
                           style: TextStyle(color: Colors.white),
@@ -128,29 +140,77 @@ class _MyHomeState extends State<MyHome> {
             // Enable snapping. This is true by default.
             snap: true,
             // Set custom snapping points.
-            snappings: [0.4, 0.7, 1.0],
+            snappings: [0.35, 0.7, 1.0],
             // Define to what the snappings relate to. In this case,
             // the total available space that the sheet can expand to.
             positioning: SnapPositioning.relativeToAvailableSpace,
           ),
           // The body widget will be displayed under the SlidingSheet
           // and a parallax effect can be applied to it.
-          body: Center(
-            child: Text(
-              'This widget is below the SlidingSheet',
-              style: TextStyle(color: Colors.white),
+          body: Container(
+            child: Stack(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(40),
+                  child: ShaderMask(
+                    shaderCallback: (bounds) {
+                      return LinearGradient(
+                              begin: Alignment.center,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.black, Colors.transparent])
+                          .createShader(
+                              Rect.fromLTRB(0, 0, bounds.width, bounds.height));
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: Image.asset(
+                      'assets/profile_7.png',
+                      height: 400,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.49,
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Karan Bhoi',
+                        style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            foreground: Paint()..shader = headerGradient),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        'Android Developer',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            foreground: Paint()..shader = highlightGradient),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
+
           builder: (context, state) {
             // This is the content of the sheet that will get
             // scrolled, if the content is bigger than the available
             // height of the sheet.
             return Container(
               margin: EdgeInsets.only(left: 20, right: 20, top: 30),
-              height: 500,
+             
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -190,12 +250,29 @@ class _MyHomeState extends State<MyHome> {
                           mySpcialization(FontAwesomeIcons.css3, 'CSS'),
                         ],
                       ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          mySpcialization(FontAwesomeIcons.php, 'PHP'),
+                          mySpcialization(
+                              FontAwesomeIcons.database, 'Database'),
+                          mySpcialization(FontAwesomeIcons.python, 'Python'),
+                        ],
+                      ), SizedBox(
+                        height: 15,
+                      ),
+                     
                     ],
                   )
                 ],
               ),
             );
           },
+
+      
         ),
       ),
     );
