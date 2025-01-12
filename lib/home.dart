@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyHome extends StatefulWidget {
   const MyHome({super.key});
@@ -10,7 +11,7 @@ class MyHome extends StatefulWidget {
 }
 
 class _MyHomeState extends State<MyHome> {
-  final Shader HeaderGradient = LinearGradient(colors: <Color>[
+  final Shader headerGradient = LinearGradient(colors: <Color>[
     Color.fromARGB(255, 1, 242, 255),
     Color.fromARGB(255, 33, 170, 97)
   ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
@@ -20,30 +21,67 @@ class _MyHomeState extends State<MyHome> {
     Color.fromARGB(255, 255, 255, 0)
   ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
 
+  // final Shader overallTextGradient = LinearGradient(colors: <Color>[
+  //   Color.fromARGB(255, 19, 17, 179),
+  //   Color.fromARGB(255, 110, 193, 204),
+  //   Color.fromARGB(255, 238, 87, 205),
+  //   Color.fromARGB(255, 71, 231, 111),
+  //   Color.fromARGB(255, 248, 202, 74),
+  // ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
+
   final Shader overallTextGradient = LinearGradient(colors: <Color>[
-    Color.fromARGB(255, 19, 17, 179),
-    Color.fromARGB(255, 110, 193, 204),
-    Color.fromARGB(255, 238, 87, 205),
-    Color.fromARGB(255, 71, 231, 111),
-    Color.fromARGB(255, 248, 202, 74),
+    Color.fromARGB(255, 255, 94, 77), // Sunset Orange
+    Color.fromARGB(255, 255, 193, 7), // Golden Yellow
+    Color.fromARGB(255, 0, 150, 255), // Deep Sky Blue
+    Color.fromARGB(255, 0, 200, 83), // Emerald Green
+    Color.fromARGB(255, 112, 128, 144), // Slate Gray
+    Color.fromARGB(255, 54, 69, 79), // Charcoal Black
+    Color.fromARGB(255, 233, 30, 99), // Fuchsia Pink
   ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
 
   mySkills(num, type) {
-    return Row(
-      children: [
-        Text(
-          num,
-          style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              foreground: Paint()..shader = overallTextGradient),
-        ),
-        Container(
-          margin: EdgeInsets.only(top: 10),
-          child: Text(type),
-        ),
-      ],
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            num,
+            style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                foreground: Paint()..shader = overallTextGradient),
+          ),
+          Container(
+            margin: EdgeInsets.only(top: 10),
+            child: Text(type),
+          ),
+        ],
+      ),
     );
+  }
+
+  // mySkills(num, type) {
+  //   return Row(
+  //     children: [
+  //       Text(
+  //         num,
+  //         style: TextStyle(
+  //             fontSize: 30,
+  //             fontWeight: FontWeight.bold,
+  //             foreground: Paint()..shader = overallTextGradient),
+  //       ),
+  //       Container(
+  //         margin: EdgeInsets.only(top: 10),
+  //         child: Text(type),
+  //       ),
+  //     ],
+  //   );
+  // }
+  _launchURL(urlLink) async {
+    final Uri url = Uri.parse(urlLink);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 
   mySpcialization(icon, text) {
@@ -85,6 +123,11 @@ class _MyHomeState extends State<MyHome> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         leading: PopupMenuButton(
+            onSelected: (result) {
+              if (result == 2) {
+                Navigator.pushNamed(context, "about");
+              }
+            },
             icon: Icon(
               Icons.menu,
               color: Colors.white,
@@ -92,6 +135,7 @@ class _MyHomeState extends State<MyHome> {
             color: Colors.black,
             itemBuilder: (context) => [
                   PopupMenuItem(
+                    value: 1,
                     child: TextButton(
                         onPressed: () {},
                         child: Text(
@@ -100,13 +144,27 @@ class _MyHomeState extends State<MyHome> {
                         )),
                   ),
                   PopupMenuItem(
+                    value: 2,
                     child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, "about");
+                        },
                         child: Text(
                           "About",
                           style: TextStyle(color: Colors.white),
                         )),
-                  )
+                  ),
+                  PopupMenuItem(
+                    value: 3,
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, "resume");
+                        },
+                        child: Text(
+                          "Resume",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                  ),
                 ]),
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -128,26 +186,72 @@ class _MyHomeState extends State<MyHome> {
             // Enable snapping. This is true by default.
             snap: true,
             // Set custom snapping points.
-            snappings: [0.4, 0.7, 1.0],
+            snappings: [0.35, 0.7, 1.0],
             // Define to what the snappings relate to. In this case,
             // the total available space that the sheet can expand to.
             positioning: SnapPositioning.relativeToAvailableSpace,
           ),
           // The body widget will be displayed under the SlidingSheet
           // and a parallax effect can be applied to it.
-          body: Center(
-            child: Text(
-              'This widget is below the SlidingSheet',
-              style: TextStyle(color: Colors.white),
+          body: Container(
+            child: Stack(
+              children: [
+                Container(
+                  margin: EdgeInsets.all(40),
+                  child: ShaderMask(
+                    shaderCallback: (bounds) {
+                      return LinearGradient(
+                              begin: Alignment.center,
+                              end: Alignment.bottomCenter,
+                              colors: [Colors.black, Colors.transparent])
+                          .createShader(
+                              Rect.fromLTRB(0, 0, bounds.width, bounds.height));
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: Image.asset(
+                      'assets/profile_7.png',
+                      height: 400,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.49,
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Karan Bhoi',
+                        style: TextStyle(
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                            foreground: Paint()..shader = headerGradient),
+                      ),
+                      SizedBox(
+                        height: 4,
+                      ),
+                      Text(
+                        'Android Developer',
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            foreground: Paint()..shader = highlightGradient),
+                      ),
+                    ],
+                  ),
+                )
+              ],
             ),
           ),
+
           builder: (context, state) {
             // This is the content of the sheet that will get
             // scrolled, if the content is bigger than the available
             // height of the sheet.
             return Container(
               margin: EdgeInsets.only(left: 20, right: 20, top: 30),
-              height: 500,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -155,8 +259,8 @@ class _MyHomeState extends State<MyHome> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       mySkills('40+', 'Projects'),
-                      mySkills('11k', 'Students'),
-                      mySkills('155', 'Sessions'),
+                      mySkills('1.5+', 'Years Experience'),
+                      mySkills('73+', 'Code Commits')
                     ],
                   ),
                   SizedBox(
@@ -189,6 +293,21 @@ class _MyHomeState extends State<MyHome> {
                           mySpcialization(FontAwesomeIcons.html5, 'HTML'),
                           mySpcialization(FontAwesomeIcons.css3, 'CSS'),
                         ],
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          mySpcialization(FontAwesomeIcons.php, 'PHP'),
+                          mySpcialization(
+                              FontAwesomeIcons.database, 'Database'),
+                          mySpcialization(FontAwesomeIcons.android, 'Kotlin'),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 15,
                       ),
                     ],
                   )
