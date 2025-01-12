@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class About extends StatefulWidget {
   const About({super.key});
@@ -26,6 +27,15 @@ class _AboutState extends State<About> {
     Color.fromARGB(255, 71, 231, 111),
     Color.fromARGB(255, 248, 202, 74),
   ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
+
+
+
+_launchURL(urlLink) async {
+   final Uri url = Uri.parse(urlLink);
+   if (!await launchUrl(url)) {
+        throw Exception('Could not launch $url');
+    }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -114,31 +124,28 @@ class _AboutState extends State<About> {
                     mainAxisAlignment:  MainAxisAlignment.center,
                     children: [
                       IconButton(
-                          onPressed: (() {}),
+                          onPressed: (() {
+                          _launchURL('https://www.linkedin.com/in/bhoikaran/');
+                          }),
                           icon: FaIcon(
                             FontAwesomeIcons.linkedin,
                             color: Colors.white,
                           )), IconButton(
-                          onPressed: (() {}),
+                          onPressed: (() {
+                              _launchURL('https://www.instagram.com/karan_bhoi_/');
+                          }),
                           icon: FaIcon(
                             FontAwesomeIcons.instagram,
                             color: Colors.white,
                           )), IconButton(
-                          onPressed: (() {}),
+                          onPressed: (() {
+                               _launchURL('https://github.com/bhoikaran');
+
+                          }),
                           icon: FaIcon(
                             FontAwesomeIcons.github,
                             color: Colors.white,
-                          )), IconButton(
-                          onPressed: (() {}),
-                          icon: FaIcon(
-                            FontAwesomeIcons.facebook,
-                            color: Colors.white,
-                          )), IconButton(
-                          onPressed: (() {}),
-                          icon: FaIcon(
-                            FontAwesomeIcons.twitter,
-                            color: Colors.white,
-                          )),
+                          )), 
                     ],
                   )
                 ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sliding_sheet/sliding_sheet.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MyHome extends StatefulWidget {
   const MyHome({super.key});
@@ -20,12 +21,22 @@ class _MyHomeState extends State<MyHome> {
     Color.fromARGB(255, 255, 255, 0)
   ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
 
+  // final Shader overallTextGradient = LinearGradient(colors: <Color>[
+  //   Color.fromARGB(255, 19, 17, 179),
+  //   Color.fromARGB(255, 110, 193, 204),
+  //   Color.fromARGB(255, 238, 87, 205),
+  //   Color.fromARGB(255, 71, 231, 111),
+  //   Color.fromARGB(255, 248, 202, 74),
+  // ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
+
   final Shader overallTextGradient = LinearGradient(colors: <Color>[
-    Color.fromARGB(255, 19, 17, 179),
-    Color.fromARGB(255, 110, 193, 204),
-    Color.fromARGB(255, 238, 87, 205),
-    Color.fromARGB(255, 71, 231, 111),
-    Color.fromARGB(255, 248, 202, 74),
+    Color.fromARGB(255, 255, 94, 77), // Sunset Orange
+    Color.fromARGB(255, 255, 193, 7), // Golden Yellow
+    Color.fromARGB(255, 0, 150, 255), // Deep Sky Blue
+    Color.fromARGB(255, 0, 200, 83), // Emerald Green
+    Color.fromARGB(255, 112, 128, 144), // Slate Gray
+    Color.fromARGB(255, 54, 69, 79), // Charcoal Black
+    Color.fromARGB(255, 233, 30, 99), // Fuchsia Pink
   ]).createShader(Rect.fromLTWH(0, 0, 200.0, 70.0));
 
   mySkills(num, type) {
@@ -47,6 +58,30 @@ class _MyHomeState extends State<MyHome> {
         ],
       ),
     );
+  }
+
+  // mySkills(num, type) {
+  //   return Row(
+  //     children: [
+  //       Text(
+  //         num,
+  //         style: TextStyle(
+  //             fontSize: 30,
+  //             fontWeight: FontWeight.bold,
+  //             foreground: Paint()..shader = overallTextGradient),
+  //       ),
+  //       Container(
+  //         margin: EdgeInsets.only(top: 10),
+  //         child: Text(type),
+  //       ),
+  //     ],
+  //   );
+  // }
+  _launchURL(urlLink) async {
+    final Uri url = Uri.parse(urlLink);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 
   mySpcialization(icon, text) {
@@ -118,7 +153,18 @@ class _MyHomeState extends State<MyHome> {
                           "About",
                           style: TextStyle(color: Colors.white),
                         )),
-                  )
+                  ),
+                  PopupMenuItem(
+                    value: 3,
+                    child: TextButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, "resume");
+                        },
+                        child: Text(
+                          "Resume",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                  ),
                 ]),
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -206,17 +252,15 @@ class _MyHomeState extends State<MyHome> {
             // height of the sheet.
             return Container(
               margin: EdgeInsets.only(left: 20, right: 20, top: 30),
-             
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       mySkills('40+', 'Projects'),
-                      mySkills('11k', 'Students'),
-                      mySkills('155', 'Sessions'),
+                      mySkills('1.5+', 'Years Experience'),
+                      mySkills('73+', 'Code Commits')
                     ],
                   ),
                   SizedBox(
@@ -259,20 +303,18 @@ class _MyHomeState extends State<MyHome> {
                           mySpcialization(FontAwesomeIcons.php, 'PHP'),
                           mySpcialization(
                               FontAwesomeIcons.database, 'Database'),
-                          mySpcialization(FontAwesomeIcons.python, 'Python'),
+                          mySpcialization(FontAwesomeIcons.android, 'Kotlin'),
                         ],
-                      ), SizedBox(
+                      ),
+                      SizedBox(
                         height: 15,
                       ),
-                     
                     ],
                   )
                 ],
               ),
             );
           },
-
-      
         ),
       ),
     );
